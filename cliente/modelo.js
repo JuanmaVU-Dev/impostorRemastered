@@ -1,11 +1,10 @@
 function Juego(){
 	this.partidas={}; //que coleccion usamos?
 	this.crearPartida=function(num, owner){
-		//generar codigo de 6 letras
-		//comprobar que no esta en uso
 		let codigo = this.obtenerCodigo();
 		if(!this.partidas[codigo]){
-			this.partidas[codigo] = new Partida(num,owner);
+			this.partidas[codigo] = new Partida(num,owner,nick);
+			owner.partida = this.partidas[codigo];
 		}
 		//Crear el objeto partida: num, owner
 		//this.partidas[] = nueva partida
@@ -53,33 +52,66 @@ function Partida(num, owner){
 				contador = contador + 1;
 			}
 			this.usuarios[nuevo] = new Usuario(nuevo);
+			if(this.numUsuarios == Object.keys(this.usuarios).length)
+			this.fase = new Completado();
 		}else{
-			console.log("Numero de jugadores máximo alcanzado");
+			console.log("Número de jugadores máximo alcanzado");
 		}
+	}
+	this.iniciarPartida = function(){
+		this.fase.iniciarPartida(this);
 	}
 	
 	this.agregarUsuario(owner);
 }
 
-function Usuario(nick){
+function Usuario(nick, juego){
 	this.nick=nick;
+	this.juego = juego;
+	this.partida;
+	this.crearPartida = function(num){
+		this.juego.crearPartida(num, this);
+	}
+	this.iniciarPartida = function(){
+		this.partida.iniciarPartida();
+	}
 }
 
 function Inicial(){{}
 	this.agregarUsuario=function(nick,partida){
 		partida.puedeAgregarUsuario(nick);
 	}
+	this.iniciarPartida=function(partida){
+		console.log("Faltan jugadores");
+	}
+}
+
+function Completado(){
+	this.agregarUsuario=function(nick,juego){
+		console.log("La partida ya ha comenzado");
+	}
+	this.iniciarPartida= function(partida){
+		partida.fase = new Jugando();
+	}
 }
 function Jugando(){
 	this.agregarUsuario=function(nick,juego){
-		//this.puedeAgregarUsuario(nick);
+		console.log("La partida ya ha comenzado");
+	}
+	this.iniciarPartida=function(partida){
+		console.log("Faltan jugadores");
 	}
 }
 function Final(){
 	this.agregarUsuario=function(nick,juego){
-		//this.puedeAgregarUsuario(nick);
+		console.log("La partida ya ha terminado");
+	}
+	this.iniciarPartida=function(partida){
+		//RESET ? 
 	}
 }
+
+
 function randomInt(low, high) {
 	return Math.floor(Math.random() * (high - low) + low);
 }
