@@ -46,7 +46,7 @@ function Partida(num, owner){
 		return Object.keys(this.usuarios).length >= 4;
 	}
 	this.comprobarMaximo = function(){
-		return Object.keys(this.usuarios).length <= 10;
+		return Object.keys(this.usuarios).length <= this.maximo;
 	}
 	this.iniciarPartida = function(){
 		this.fase.iniciarPartida(this);
@@ -54,7 +54,7 @@ function Partida(num, owner){
 	this.abandonarPartida = function(nick){
 		this.fase.abandonarPartida(nick, this);
 	}
-	this.eleminarUsuario=function(nick){
+	this.eliminarUsuario=function(nick){
 		delete this.usuarios[nick];
 	}
 	this.agregarUsuario(owner);
@@ -64,43 +64,54 @@ function Inicial(){{}
 	this.nombre = "Inicial";
 	this.agregarUsuario=function(nick,partida){
 		partida.puedeAgregarUsuario(nick);
+		if (partida.comprobarMinimo()){
+			partida.fase=new Completado();
+		}
 	}
 	this.iniciarPartida=function(partida){
 		console.log("Faltan jugadores");
 	}
 	this.abandonarPartida=function(nick,partida){
-		partida.eleminarUsuario(nick);
+		partida.eliminarUsuario(nick);
 		//comprobar si no quedan usuarios
 	}
 }
 
 function Completado(){
 	this.nombre = "Completado";
-	this.agregarUsuario=function(nick,juego){
-		console.log("La partida ya ha comenzado");
+	this.agregarUsuario=function(nick,partida){
+		if (partida.comprobarMaximo()){
+			partida.puedeAgregarUsuario(nick);
+		}
+		else{
+			console.log("Lo siento, numero máximo")
+		}
 	}
 	this.iniciarPartida= function(partida){
 		partida.fase = new Jugando();
 	}
 	this.abandonarPartida=function(nick,partida){
-		delete partida.usuarios[nick];
-		partida.fase = new Inicial();
+		partida.eliminarUsuario(nick);
+		if (!partida.comprobarMinimo()){
+			partida.fase=new Inicial();
+		}
 	}
 }
 function Jugando(){
 	this.nombre = "Jugando";
-	this.agregarUsuario=function(nick,juego){
+	this.agregarUsuario=function(nick,partida){
 		console.log("La partida ya ha comenzado");
 	}
 	this.iniciarPartida=function(partida){
 	}
 	this.abandonarPartida=function(nick,partida){
-		//eliminar el usuario y comprobar si no quedan usuarios
+		partida.eliminarUsuario(nick);
+		//comprobar si termina la partida
 	}
 }
 function Final(){
 	this.nombre = "Final";
-	this.agregarUsuario=function(nick,juego){
+	this.agregarUsuario=function(nick,partida){
 		console.log("La partida ya ha terminado");
 	}
 	this.iniciarPartida=function(partida){
