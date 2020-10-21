@@ -1,6 +1,7 @@
 function Juego(){
 	this.partidas={}; 
 	this.crearPartida=function(num, owner){
+		//comprobar limites de num
 		let codigo = this.obtenerCodigo();
 		if(!this.partidas[codigo]){
 			this.partidas[codigo] = new Partida(num,owner.nick);
@@ -30,6 +31,7 @@ function Partida(num, owner){
 	this.nickOwner = owner;
 	this.fase = new Inicial();
 	this.usuarios = {} 
+	this.tareas = ["jardines","calles","mobiliario","basuras"];
 	this.agregarUsuario=function(nick){
 		this.fase.agregarUsuario(nick,this);
 	}
@@ -41,6 +43,7 @@ function Partida(num, owner){
 				contador = contador + 1;
 			}
 			this.usuarios[nuevo] = new Usuario(nuevo);
+			this.usuarios[nuevo].partida = this;
 	}
 	this.comprobarMinimo = function(){
 		return Object.keys(this.usuarios).length >= 4;
@@ -50,6 +53,23 @@ function Partida(num, owner){
 	}
 	this.iniciarPartida = function(){
 		this.fase.iniciarPartida(this);
+	}
+	this.puedeIniciarPartida = function(){
+		this.fase = new Jugando();
+		var i=0;
+		this.asignarTareas();
+		this.asignarImpostor();
+	}
+	this.asignarTareas = function(){
+		var keys = Object.keys(this.usuarios);
+		for(i=0;i<keys.length;i++){
+			this.usuarios[keys[i]].encargo = this.tareas[i%this.tareas.length];
+		}
+	}
+	this.asignarImpostor = function(){
+		var keys = Object.keys(this.usuarios);
+		var usuarioAleatorio = keys[randomInt(0,keys.length)];
+		this.usuarios[usuarioAleatorio].impostor = true;
 	}
 	this.abandonarPartida = function(nick){
 		this.fase.abandonarPartida(nick, this);
@@ -88,7 +108,10 @@ function Completado(){
 		}
 	}
 	this.iniciarPartida= function(partida){
-		partida.fase = new Jugando();
+		partida.puedeIniciarPartida();
+		//asignar engcargos: secuencialmente a todos los usr
+		//asignarimpostor dado el array usuario Object.keys
+
 	}
 	this.abandonarPartida=function(nick,partida){
 		partida.eliminarUsuario(nick);
@@ -126,6 +149,8 @@ function Usuario(nick, juego){
 	this.nick=nick;
 	this.juego = juego;
 	this.partida;
+	this.impostor=false;
+	this.encargo ="ninguno";
 	this.crearPartida = function(num){
 		return this.juego.crearPartida(num, this);
 	}
@@ -139,4 +164,16 @@ function Usuario(nick, juego){
 
 function randomInt(low, high) {
 	return Math.floor(Math.random() * (high - low) + low);
+}
+
+function inicio(){
+	juego = new Juego()
+	var usr = new Usuario("Pepe",juego)
+	var codigo = usr.crearPartida(4)
+	
+	juego.unirAPartida(codigo,"luis")
+	juego.unirAPartida(codigo,"luisa")
+	juego.unirAPartida(codigo,"luisito")
+	
+	usr.iniciarPartida();
 }
