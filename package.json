@@ -1,0 +1,26 @@
+{
+  "name": "impostorremastered",
+  "version": "1.0.0",
+  "description": "Juego del impostor",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/jasmine-node servidor"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuanmaVU-Dev/impostorRemastered.git"
+  },
+  "keywords": [
+    "juego"
+  ],
+  "author": "Juan Manuel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JuanmaVU-Dev/impostorRemastered/issues"
+  },
+  "homepage": "https://github.com/JuanmaVU-Dev/impostorRemastered#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jasmine-node": "^3.0.0"
+  }
+}
