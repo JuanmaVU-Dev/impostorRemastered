@@ -4,16 +4,19 @@ function Juego() {
 		//comprobar limites de num
 		let codigo = "fallo";
 		if (!this.partidas[codigo] && this.numeroValido(num)) {
-			this.partidas[codigo] = new Partida(num, owner.nick);
-			owner.partida = this.partidas[codigo];
 			codigo = this.obtenerCodigo();
+			this.partidas[codigo] = new Partida(num, owner.nick, codigo);
+			owner.partida = this.partidas[codigo];
 		}
 		return codigo;
 	}
 	this.unirAPartida = function (codigo, nick) {
+		var res = -1;
 		if (this.partidas[codigo]) {
 			this.partidas[codigo].agregarUsuario(nick);
+			//numeroUsuario por ejemplo
 		}
+		return res;
 	}
 	this.obtenerCodigo = function () {
 		let cadena = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -30,6 +33,14 @@ function Juego() {
 	}
 	this.eliminarPartida = function (codigo) {
 		delete this.partidas[codigo];
+	}
+	this.listaPartidas = function(){
+		var listaJSON = [];
+		var huecos = 0;
+		for(key in this.partidas){
+			
+		}
+		return listaJSON;
 	}
 }
 
@@ -156,7 +167,9 @@ function Partida(num, owner, codigo) {
 			}
 		}
 	}
-	
+	this.huecos = function(){
+		return this.maximo-this.numeroDeJugadores();
+	}
 
 }
 
@@ -284,17 +297,17 @@ function randomInt(low, high) {
 	return Math.floor(Math.random() * (high - low) + low);
 }
 
-function inicio() {
-	juego = new Juego()
-	var usr = new Usuario("Pepe", juego)
-	var codigo = usr.crearPartida(4)
+// function inicio() {
+// 	juego = new Juego()
+// 	var usr = new Usuario("Pepe", juego)
+// 	var codigo = usr.crearPartida(4)
 
-	juego.unirAPartida(codigo, "luis")
-	juego.unirAPartida(codigo, "luisa")
-	juego.unirAPartida(codigo, "luisito")
+// 	juego.unirAPartida(codigo, "luis")
+// 	juego.unirAPartida(codigo, "luisa")
+// 	juego.unirAPartida(codigo, "luisito")
 
-	usr.iniciarPartida();
-}
+// 	usr.iniciarPartida();
+// }
 
 module.exports.Juego = Juego;
 module.exports.Usuario = Usuario;

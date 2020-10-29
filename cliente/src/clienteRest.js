@@ -1,0 +1,22 @@
+function ClienteRest(){
+    this.crearPartida=function(nick,numero){
+        $.getJSON("/crearPartida/"+nick+"/"+numero,function(data){    
+            console.log(data);
+        });
+    }
+    this.unirAPartida=function(codigo,nick){
+        $.getJSON("/unirAPartida/"+codigo+"/"+nick,function(data){
+            console.log(data);
+        });
+    }
+    this.listaPartidas=function(){
+        $.getJSON("/listaPartidas",function(data){
+            console.log(data);
+        });
+    }
+    this.iniciarPartida=function(codigo,nick){
+        $.getJSON("/iniciarPartida/"+codigo+"/"+nick,function(data){
+            console.log(data);
+        });
+    }
+}
