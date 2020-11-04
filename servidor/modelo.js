@@ -36,7 +36,7 @@ function Juego() {
 		var listaJSON = [];
 		var huecos = 0;
 		for(key in this.partidas){
-			var partida = this.partida[key];
+			var partida = this.partidas[key];
 			huecos = partida.huecos();
 			if(huecos>0){
 				listaJSON.push({"codigo":key,"huecos":huecos});
