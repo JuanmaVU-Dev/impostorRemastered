@@ -29,6 +29,7 @@ function pruebas(){
 	});
 	rest.crearPartida("pepe",4,function(data){
 		codigo=data.codigo;
+		//cambiar orden IMPORTANTE CAMBIAR ORDEN
 		rest.unirAPartida("juan",codigo);
 		rest.unirAPartida("juani",codigo);
 		rest.unirAPartida("juana",codigo);

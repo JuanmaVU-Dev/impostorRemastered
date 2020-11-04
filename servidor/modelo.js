@@ -12,6 +12,7 @@ function Juego() {
 	this.unirAPartida = function (codigo, nick) {
 		var res = -1;
 		if (this.partidas[codigo]) {
+			res = 0;
 			this.partidas[codigo].agregarUsuario(nick);
 		}
 		return res;
