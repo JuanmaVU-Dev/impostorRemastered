@@ -1,11 +1,11 @@
 function Juego() {
 	this.partidas = {};
-	this.crearPartida = function (num, owner) {
+	this.crearPartida = function (num, nick) {
 		let codigo = "fallo";
 		if (!this.partidas[codigo] && this.numeroValido(num)) {
 			codigo = this.obtenerCodigo();
-			this.partidas[codigo] = new Partida(num, owner.nick, codigo);
-			owner.partida = this.partidas[codigo];
+			this.partidas[codigo] = new Partida(num, nick, codigo, this);
+			//owner.partida = this.partidas[codigo];
 		}
 		return codigo;
 	}
@@ -38,6 +38,16 @@ function Juego() {
 		var huecos = 0;
 		for(key in this.partidas){
 			var partida = this.partidas[key];
+			var owner = partida.nickOwner;
+			listaJSON.push({"codigo":key,"owner":owner});
+		}
+		return listaJSON;
+	}
+	this.listaPartidasDisponibles = function(){
+		var listaJSON = [];
+		var huecos = 0;
+		for(key in this.partidas){
+			var partida = this.partidas[key];
 			huecos = partida.huecos();
 			if(huecos>0){
 				listaJSON.push({"codigo":key,"huecos":huecos});
@@ -45,11 +55,18 @@ function Juego() {
 		}
 		return listaJSON;
 	}
+	this.iniciarPartida = function(codigo, nick){
+		var owner = this.partidas[codigo].nickOwner;
+		if(nick==owner){
+			this.partidas[codigo].iniciarPartida();
+		}
+	}
 }
 
-function Partida(num, owner, codigo) {
+function Partida(num, owner, codigo, juego) {
 	this.maximo = num;
 	this.nickOwner = owner;
+	this.juego = juego;
 	this.fase = new Inicial();
 	this.codigo = codigo;
 	this.usuarios = {};

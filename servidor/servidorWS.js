@@ -37,7 +37,16 @@ function ServidorWS(){
                 //ToDO
                 //comprobar si nick es owner
                 //cli.enviarATodos(socket)
-		    });
+                juego.iniciarPartida(codigo, nick);
+                var fase = juego.partidas[codigo].fase.nombre;
+                cli.enviarATodos(io,codigo, "partidaIniciada", fase);
+            });
+            socket.on('listaPartidas', function() {
+                cli.enviarRemitente(socket, "recibirListaPartidas", juego.listaPartidas());
+            });
+            socket.on('listaPartidasDisponibles', function() {
+                cli.enviarRemitente(socket, "recibirListaPartidasDisponibles", juego.listaPartidasDisponibles());
+            });
 		});
     }
 }
