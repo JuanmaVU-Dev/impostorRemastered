@@ -113,6 +113,18 @@ describe("El juego del impostor", function () {
                 expect(partida.usuarios['Mario']).toBe(undefined);
             });
 
+            it("Todos los jugadores salen de la partida", function () {
+                expect(Object.keys(partida.usuarios).length).toEqual(4);
+                partida.usuarios['Mario'].abandonarPartida();
+                partida.usuarios['Pepe'].abandonarPartida();
+                partida.usuarios['María'].abandonarPartida();
+                partida.usuarios['José Carlos'].abandonarPartida();
+                expect(Object.keys(partida.usuarios).length).toEqual(0);
+                expect(partida.usuarios['Mario']).toBe(undefined);
+                expect(partida.numeroDeJugadores()).toEqual(0);
+                expect(juego.partidas[codigo]).toBe(undefined);
+            });
+
             it("el impostor ataca, muere un ciudadano", function () {
                 var impostor;
                 var inocente;

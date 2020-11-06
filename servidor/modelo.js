@@ -118,6 +118,9 @@ function Partida(num, owner, codigo, juego) {
 		if (!this.comprobarMinimo()) {
 			this.fase = new Inicial();
 		}
+		if(this.numeroDeJugadores() <= 0){
+			this.juego.eliminarPartida(this.codigo);
+		}
 	}
 	this.eliminarUsuario = function (nick) {
 		delete this.usuarios[nick];
