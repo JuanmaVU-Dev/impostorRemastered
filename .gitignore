@@ -1,1 +1,6 @@
 debug.log
+.vscode/launch.json
+node_modules
+Documentacion
+cliente/src/modelo.js
+cliente/src/modeloSpec.js
