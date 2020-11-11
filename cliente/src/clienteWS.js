@@ -11,13 +11,16 @@ function ClienteWS(){
         this.socket.emit("unirAPartida", codigo, nick);
     }
     this.iniciarPartida = function(){
-        this.socket.emit("iniciarPartida",this.codigo, this.nick);
+        this.socket.emit("iniciarPartida", this.codigo, this.nick);
     }
     this.listaPartidasDisponibles = function(){
         this.socket.emit("listaPartidasDisponibles");
     }
     this.listaPartidas = function(){
         this.socket.emit("listaPartidas");
+    }
+    this.atacar = function(nickAtacado){
+        this.socket.emit("atacar", this.codigo, this.nick, nickAtacado);
     }
     this.ini = function(){
         this.socket=io.connect();
@@ -43,6 +46,9 @@ function ClienteWS(){
         });
         this.socket.on("partidaIniciada",function(fase){
             console.log("Iniciar la fase: "+fase);
+        });
+        this.socket.on("hasAtacado",function(nick){
+            console.log("Has atacado a:"+nick);
         });
         this.socket.on("recibirListaPartidas",function(partidas){
             console.log(partidas);

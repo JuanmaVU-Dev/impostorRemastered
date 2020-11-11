@@ -20,8 +20,7 @@ function ServidorWS(){
 		io.on('connection',function(socket){		    
 		    socket.on('crearPartida', function(nick,numero) {
 		        console.log('usuario nick: '+nick+" crea partida numero: "+numero);
-		        var usr=new modelo.Usuario(nick);
-				var codigo=juego.crearPartida(numero,usr);		        				
+				var codigo=juego.crearPartida(numero,nick);	        				
 		       	cli.enviarRemitente(socket,"partidaCreada",{"codigo":codigo})		        		        
             });
             socket.on('unirAPartida', function(codigo, nick) {
@@ -40,6 +39,10 @@ function ServidorWS(){
                 juego.iniciarPartida(codigo, nick);
                 var fase = juego.partidas[codigo].fase.nombre;
                 cli.enviarATodos(io,codigo, "partidaIniciada", fase);
+            });
+            socket.on('atacar',function(codigo, nickAtacante, nickAtacado){
+                juego.partidas[codigo].usuarios[nickAtacante].atacar(nickAtacado);
+                cli.enviarRemitente(socket, "hasAtacado", nickAtacado);
             });
             socket.on('listaPartidas', function() {
                 cli.enviarRemitente(socket, "recibirListaPartidas", juego.listaPartidas());
