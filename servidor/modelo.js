@@ -241,7 +241,7 @@ function Partida(num, owner, codigo, juego) {
 	}
 	this.finalVotacion = function(){
 		this.fase = new Jugando();
-		this.reiniciarContadoresVotaciones(); //ha votado, skip, elegido
+		//this.reiniciarContadoresVotaciones(); //ha votado, skip, elegido
 		this.comprobarFinal();
 	}
 	this.reiniciarContadoresVotaciones = function(){
@@ -277,6 +277,7 @@ function Partida(num, owner, codigo, juego) {
 		this.fase.lanzarVotacion(this);
 	}
 	this.puedeLanzarVotacion=function(){
+		this.reiniciarContadoresVotaciones();
 		this.fase=new Votacion();
 	}
 	this.huecos = function(){
@@ -410,7 +411,7 @@ function Usuario(nick) {
 		}
 	}
 	this.atacar = function (nick) {
-		if (this.impostor) this.partida.atacar(nick);
+		if (this.impostor) res = this.partida.atacar(nick);
 	}
 	this.saltar=function(){
 		this.haVotado = true;

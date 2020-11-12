@@ -55,6 +55,9 @@ function ClienteWS(){
             cli.codigo = data.codigo;
             console.log(data);
         });
+        this.socket.on("acabaPartida", function(data){
+            console.log(data);
+        });
         this.socket.on("nuevoJugador",function(nick){
             console.log(nick+" se une a la partida");
         });
@@ -62,7 +65,7 @@ function ClienteWS(){
             console.log("Iniciar la fase: "+fase);
         });
         this.socket.on("hasAtacado",function(nick){
-            console.log("Has atacado a:"+nick);
+            console.log(nick);
         });
         this.socket.on("votacionLanzada",function(data){
             console.log(data);

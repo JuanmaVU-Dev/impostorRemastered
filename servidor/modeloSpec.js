@@ -231,7 +231,24 @@ describe("El juego del impostor", function () {
                     partida.usuarios["María"].impostor = false;
                     partida.usuarios["José Carlos"].impostor = false;
                     
-                    expect(partida.fase.nombre).toEqual("votacion");
+                    expect(partida.fase.nombre).toEqual("Votacion");
+                });
+                it("impostor ataca a todos, y gana",function(){
+                    //iniciar partida
+                    //ajustar a mano el impostor
+                    //atacar y comprobar
+                    
+                    partida.usuarios[nick].impostor=true;
+                    partida.usuarios["Mario"].impostor=false;
+                    partida.usuarios["María"].impostor=false;
+                    partida.usuarios["José Carlos"].impostor=false;
+        
+                    juego.atacar(codigo, nick, "Mario");
+                    expect(partida.usuarios["Mario"]).toEqual("muerto");
+                    expect(partida.fase.nombre).toEqual("Jugando");
+                    juego.atacar(codigo, nick, "María");
+                    expect(partida.usuarios["María"]).toEqual("muerto");
+                    expect(partida.fase.nombre).toEqual("Final");
                 });
             });
         });

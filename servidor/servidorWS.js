@@ -13,7 +13,9 @@ function ServidorWS(){
     this.enviarATodosMenosRemitente=function(socket,nombre,mens,datos){
         socket.broadcast.to(nombre).emit(mens,datos)
     };
+    this.enviarAUno = function(){
 
+    }
 
     this.lanzarSocketSrv = function(io, juego){
         var cli=this;
@@ -42,7 +44,13 @@ function ServidorWS(){
             });
             socket.on('atacar',function(codigo, nickAtacante, nickAtacado){
                 juego.partidas[codigo].usuarios[nickAtacante].atacar(nickAtacado);
-                cli.enviarRemitente(socket, "hasAtacado", nickAtacado);
+                var fase = juego.obtenerFase(codigo);
+                if(fase == "Final"){
+                    cli.enviarATodos(io,codigo, "acabaPartida", "Ganan los impostores");
+                }else{
+                    //avisar al impostor
+                    cli.enviarRemitente(socket, "hasAtacado", fase);
+                }
             });
             socket.on('listaPartidas', function() {
                 cli.enviarRemitente(socket, "recibirListaPartidas", juego.listaPartidas());
