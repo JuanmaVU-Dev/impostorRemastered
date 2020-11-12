@@ -22,6 +22,20 @@ function ClienteWS(){
     this.atacar = function(nickAtacado){
         this.socket.emit("atacar", this.codigo, this.nick, nickAtacado);
     }
+    this.lanzarVotacion = function(){
+        this.socket.emit("lanzarVotacion", this.codigo, this.nick);
+    }
+    this.saltarVoto = function(){
+        this.socket.emit("saltarVoto", this.codigo, this.nick);
+    }
+    this.votar = function(){
+        this.socket.emit("votar", this.codigo, this.nick, sospechoso);
+    }
+    this.obtenerEncargo = function(){
+        this.socket.emit("obtenerEncargo", this.codigo, this.nick)
+    }
+    //final votacion
+    //cuantos han votado
     this.ini = function(){
         this.socket=io.connect();
         this.lanzarSocketSrv();    
@@ -50,21 +64,33 @@ function ClienteWS(){
         this.socket.on("hasAtacado",function(nick){
             console.log("Has atacado a:"+nick);
         });
+        this.socket.on("votacionLanzada",function(data){
+            console.log(data);
+        });
         this.socket.on("recibirListaPartidas",function(partidas){
             console.log(partidas);
         });
         this.socket.on("recibirListaPartidasDisponibles",function(partidas){
             console.log(partidas);
         });
+        this.socket.on("finalVotacion",function(data){
+            console.log(data);
+        });
+        this.socket.on("haVotado",function(data){
+            console.log(data);
+        });
+        this.socket.on("recibirEncargo", function(data){
+            console.log(data);
+        })
     }
     this.ini();
 }
-
+var ws2, ws3, ws4;
 function pruebas(){
     // var ws1 = new ClienteWS();
-    var ws2 = new ClienteWS();
-    var ws3 = new ClienteWS();
-    var ws4 = new ClienteWS();
+    ws2 = new ClienteWS();
+    ws3 = new ClienteWS();
+    ws4 = new ClienteWS();
     var codigo = ws.codigo;
 
     ws2.unirAPartida(codigo, "juan");

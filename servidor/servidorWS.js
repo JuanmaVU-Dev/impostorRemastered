@@ -47,6 +47,38 @@ function ServidorWS(){
             socket.on('listaPartidas', function() {
                 cli.enviarRemitente(socket, "recibirListaPartidas", juego.listaPartidas());
             });
+            socket.on('lanzarVotacion', function(codigo, nick) {
+                juego.lanzarVotacion(codigo, nick);
+                var fase = juego.obtenerFase(codigo);
+                cli.enviarATodos(io, codigo, "votacionLanzada", fase);
+            });
+            socket.on('saltarVoto', function(codigo, nick) {
+                var partida = juego.partidas[codigo];
+                juego.saltarVoto(codigo, nick);
+                if(partida.todosHanVotado()){
+                    //enviar el mas votado si lo hay
+                    var data = {"elegido":partida.elegido,"fase":juego.obtenerFase(codigo)}
+                    cli.enviarATodos(io,codigo,"finalVotacion",data);
+                }else{
+                    //enviar lista de los que han votado
+                    cli.enviarATodos(io,codigo,"haVotado",partida.listaHanVotado());
+                }
+            });
+            socket.on('votar', function(codigo, nick, sospechoso) {
+                var partida = juego.partidas[codigo];
+                juego.votar(codigo, nick, sospechoso);
+                if(partida.todosHanVotado()){
+                    //enviar el mas votado si lo hay
+                    var data = {"elegido":partida.elegido,"fase":juego.obtenerFase(codigo)}
+                    cli.enviarATodos(io,codigo,"finalVotacion",data);
+                }else{
+                    //enviar lista de los que han votado
+                    cli.enviarATodos(io,codigo,"haVotado",partida.listaHanVotado());
+                }
+            });
+            socket.on("obtenerEncargo", function(codigo, nick){
+                cli.enviarRemitente(socket, "recibirEncargo", juego.obtenerEncargo(codigo, nick));
+            });
             socket.on('listaPartidasDisponibles', function() {
                 cli.enviarRemitente(socket, "recibirListaPartidasDisponibles", juego.listaPartidasDisponibles());
             });
