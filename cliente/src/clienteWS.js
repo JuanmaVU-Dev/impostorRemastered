@@ -49,7 +49,11 @@ function ClienteWS(){
         this.socket.on("partidaCreada", function(data){
             cli.codigo = data.codigo;
             console.log(data);
-            pruebas();
+            if(data.codigo != "fallo"){
+                cw.mostrarEsperandoRival();
+            }else{
+                cw.mostrarCrearPartida();
+            }
         });
         this.socket.on("unidoAPartida", function(data){
             cli.codigo = data.codigo;
@@ -75,6 +79,7 @@ function ClienteWS(){
         });
         this.socket.on("recibirListaPartidasDisponibles",function(partidas){
             console.log(partidas);
+            cw.mostrarUnirAPartida(partidas);
         });
         this.socket.on("finalVotacion",function(data){
             console.log(data);
