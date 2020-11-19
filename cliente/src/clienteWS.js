@@ -58,6 +58,11 @@ function ClienteWS(){
         this.socket.on("unidoAPartida", function(data){
             cli.codigo = data.codigo;
             console.log(data);
+            if(data.codigo != "fallo"){
+                cw.mostrarEsperandoRival();
+            }else{
+                cw.mostrarUnirAPartida();
+            }
         });
         this.socket.on("acabaPartida", function(data){
             console.log(data);

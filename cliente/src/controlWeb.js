@@ -1,13 +1,15 @@
 function ControlWeb(){
     this.mostrarCrearPartida = function(){
         var cadena = '<div id="mostrarCP">'
+        cadena = cadena +'<form class="form-inline">';
         cadena = cadena + '<div class="form-group">';
         cadena = cadena + '<label for="usr"> Nick: </label>';
         cadena = cadena + '<input type="txt" class="form-control" id="nick">';
         cadena = cadena + '</div>';
         cadena = cadena + '<div class="form-group">';
         cadena = cadena + '<label for="num">Numero: </label>';
-        cadena = cadena + '<input type="txt" class="form-control" id="num">';
+        cadena = cadena + '</form>';
+        cadena = cadena + '<input type="number" class="form-control" id="num" min="4" max="10">';
         cadena = cadena + '</div>';
         cadena = cadena + '<button type="button" id="btnCrear" class="btn btn-primary">Crear partida</button>';
         cadena = cadena + '</div>';
@@ -25,8 +27,12 @@ function ControlWeb(){
         $('#mER').remove();
         var cadena = '<div id="mER">';
         cadena = cadena + '<img src="cliente/img/loading.gif" class="img-rounded" alt="loading image">';
+        cadena = cadena + '<button type="button" id="btnIniciar" class="btn btn-primary">Iniciar partida</button>';
         cadena = cadena + '</div>';
         $('#esperando').append(cadena);
+        $('#btnIniciar').on('click',function(){
+            ws.iniciarPartida();
+        });
     }
 
     this.mostrarUnirAPartida = function(lista){
@@ -35,7 +41,7 @@ function ControlWeb(){
         cadena = cadena + '<div  class="list-group">';
         for(var i=0;i<lista.length;i++){
             cadena = cadena + '<a href="#" value='+lista[i].codigo+' class="list-group-item">';
-            cadena = cadena + 'Código: ' +lista[i].codigo + ' Huecos: ' + lista[i].huecos;
+            cadena = cadena + 'Código: ' +lista[i].codigo + '<span class="badge">' + lista[i].huecos + '</span>';
             cadena = cadena +'</a>';
         }
         cadena = cadena + '</div>';
@@ -50,9 +56,14 @@ function ControlWeb(){
     
         $('#btnUnir').on('click',function(){
             var nick = $('#nick').val();
-            var codigo = StoreValue[0];
-            $('#mUAP').remove();
-            ws.unirAPartida(codigo, nick);
+            if(nick=="" || StoreValue[0] == undefined){
+
+            }else{
+                var codigo = StoreValue[0];
+                $('#mostrarCP').remove();
+                $('#mUAP').remove();
+                ws.unirAPartida(codigo, nick);
+            }
         });
     }
 }
