@@ -26,6 +26,14 @@ app.get('/', function (request, response) {
     
 });
 
+app.get('/game', function (request, response) {
+    var contenido = fs.readFileSync(__dirname + "/cliente/index-game.html"); 
+    
+    response.setHeader("Content-type", "text/html");
+    response.send(contenido);
+    
+});
+
 app.get('/nuevoUsuario/:nick',function(request, response){
     var nick = request.params.nick;
     var usuario = new modelo.Usuario(nick);
