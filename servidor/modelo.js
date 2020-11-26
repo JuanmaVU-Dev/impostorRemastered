@@ -84,6 +84,10 @@ function Juego() {
 		res = {"encargo" : encargo, "impostor" : impostor}
 		return res;
 	}
+	this.atacar=function(codigo,nick,atacado){
+		var usr=this.partidas[codigo].usuarios[nick];
+		usr.atacar(atacado);
+	}
 }
 
 function Partida(num, owner, codigo, juego) {
@@ -231,13 +235,14 @@ function Partida(num, owner, codigo, juego) {
 		return lista;
 	}
 	this.comprobarVotacion=function(){
-		let elegido = this.masVotado();
-		if (elegido && elegido.votos>this.numeroSkips()){
-			//si es el mas votado, se le mata
-			elegido.esAtacado();
-			this.elegido = elegido.nick;
+		if (this.todosHanVotado()){
+			let elegido=this.masVotado();
+			if (elegido && elegido.votos>this.numeroSkips()){
+				elegido.esAtacado();
+				this.elegido=elegido.nick;
+			}
+			this.finalVotacion();
 		}
-		this.finalVotacion();
 	}
 	this.finalVotacion = function(){
 		this.fase = new Jugando();
