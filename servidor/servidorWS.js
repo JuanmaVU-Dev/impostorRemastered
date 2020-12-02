@@ -40,7 +40,11 @@ function ServidorWS(){
                 //cli.enviarATodos(socket)
                 juego.iniciarPartida(codigo, nick);
                 var fase = juego.partidas[codigo].fase.nombre;
-                cli.enviarATodos(io,codigo, "partidaIniciada", fase);
+                if(fase=="Jugando"){
+                    cli.enviarATodos(io,codigo, "partidaIniciada", fase);
+                }else{
+                    cli.enviarRemitente(socket, "esperando", fase);
+                }
             });
             socket.on('atacar',function(codigo, nickAtacante, nickAtacado){
                 juego.partidas[codigo].usuarios[nickAtacante].atacar(nickAtacado);

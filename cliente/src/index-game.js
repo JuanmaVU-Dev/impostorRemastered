@@ -4,6 +4,12 @@
  *  - Tuxemon, https://github.com/Tuxemon/Tuxemon
  */
 
+function lanzarJuego(){
+  cw.limpiar();
+  game = new Phaser.Game(config);
+}
+
+
 const config = {
   type: Phaser.AUTO,
   width: 800,
@@ -23,9 +29,11 @@ const config = {
   }
 };
 
-const game = new Phaser.Game(config);
 let cursors;
 let player;
+let jugadores;
+let recursos = [{nombre:"miles",frame:0},{nombre:"spidey",frame:0}]
+let game;
 let showDebug = false;
 
 function preload() {
@@ -38,7 +46,7 @@ function preload() {
   // If you don't use an atlas, you can do the same thing with a spritesheet, see:
   //  https://labs.phaser.io/view.html?src=src/animation/single%20sprite%20sheet.js
   //this.load.atlas("atlas", "cliente/assets/atlas/atlas.png", "cliente/assets/atlas/atlas.json");
-  this.load.spritesheet("gabe","cliente/assets/images/Soldier.png",{frameWidth:32,frameHeight:32});
+  this.load.spritesheet("gabe","cliente/assets/images/CientosMorales.jpg",{frameWidth:48,frameHeight:48});
   //repetir por cada personaje o usar una con todos
 }
 
@@ -68,7 +76,7 @@ function create() {
   // Create a sprite with physics enabled via the physics system. The image used for the sprite has
   // a bit of whitespace, so I'm using setSize & setOffset to control the size of the player's body.
   // player = this.physics.add
-  player = this.physics.add.sprite(spawnPoint.x, spawnPoint.y,"gabe");
+  player = this.physics.add.sprite(spawnPoint.x, spawnPoint.y,"varios", recursos);
   //   .sprite(spawnPoint.x, spawnPoint.y, "atlas", "misa-front")
   //   .setSize(30, 40)
   //   .setOffset(0, 24);
@@ -78,10 +86,11 @@ function create() {
 
   // Create the player's walking animations from the texture atlas. These are stored in the global
   // animation manager so any sprite can access them.
+  let nombre = recursos[0].nombre;
   const anims = this.anims;
   anims.create({
     key: "gabe-left-walk",
-    frames: anims.generateFrameNames("gabe", {
+    frames: anims.generateFrameNames("varios", {
       //prefix: "misa-left-walk.",
       start: 3,
       end: 5,

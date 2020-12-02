@@ -70,8 +70,12 @@ function ClienteWS(){
         this.socket.on("nuevoJugador",function(nick){
             console.log(nick+" se une a la partida");
         });
+        this.socket.on("esperando",function(fase){
+            console.log("esperando...");
+        });
         this.socket.on("partidaIniciada",function(fase){
             console.log("Iniciar la fase: "+fase);
+            lanzarJuego();
         });
         this.socket.on("hasAtacado",function(nick){
             console.log(nick);
