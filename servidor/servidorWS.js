@@ -13,8 +13,8 @@ function ServidorWS(){
     this.enviarATodosMenosRemitente=function(socket,nombre,mens,datos){
         socket.broadcast.to(nombre).emit(mens,datos)
     };
-    this.enviarAUno = function(){
-
+    this.enviarGlobal = function(socket, mensaje, datos){
+        socket.broadcast.emit(mensaje, datos);
     }
 
     this.lanzarSocketSrv = function(io, juego){
@@ -23,7 +23,9 @@ function ServidorWS(){
 		    socket.on('crearPartida', function(nick,numero) {
 		        console.log('usuario nick: '+nick+" crea partida numero: "+numero);
 				var codigo=juego.crearPartida(numero,nick);	        				
-		       	cli.enviarRemitente(socket,"partidaCreada",{"codigo":codigo})		        		        
+                cli.enviarRemitente(socket,"partidaCreada",{"codigo":codigo});
+                var lista = juego.listaPartidasDisponibles();
+                cli.enviarGlobal(socket, "recibirListaPartidasDisponibles", lista);      		        
             });
             socket.on('unirAPartida', function(codigo, nick) {
                 //nick o codigo nulo

@@ -46,11 +46,13 @@ function Juego() {
 	this.listaPartidasDisponibles = function(){
 		var listaJSON = [];
 		var huecos = 0;
+		var maximo;
 		for(key in this.partidas){
 			var partida = this.partidas[key];
 			huecos = partida.huecos();
+			maximo = partida.maximo;
 			if(huecos>0){
-				listaJSON.push({"codigo":key,"huecos":huecos});
+				listaJSON.push({"codigo":key,"huecos":huecos, "maximo":maximo});
 			}
 		}
 		return listaJSON;

@@ -2,6 +2,7 @@ function ClienteWS(){
     this.socket;
     this.nick = undefined;
     this.codigo = undefined;
+    this.owner = false;
     this.crearPartida = function(nick, numero){
         this.nick = nick;
         this.socket.emit("crearPartida", nick, numero);
@@ -52,8 +53,6 @@ function ClienteWS(){
             if(data.codigo != "fallo"){
                 cli.owner = true;
                 cw.mostrarEsperandoRival();
-            }else{
-                cw.mostrarCrearPartida();
             }
         });
         this.socket.on("unidoAPartida", function(data){
@@ -61,8 +60,6 @@ function ClienteWS(){
             console.log(data);
             if(data.codigo != "fallo"){
                 cw.mostrarEsperandoRival();
-            }else{
-                cw.mostrarUnirAPartida();
             }
         });
         this.socket.on("acabaPartida", function(data){
@@ -89,7 +86,9 @@ function ClienteWS(){
         });
         this.socket.on("recibirListaPartidasDisponibles",function(partidas){
             console.log(partidas);
-            cw.mostrarUnirAPartida(partidas);
+            if(!cli.codigo){
+                cw.mostrarUnirAPartida(partidas);
+            }
         });
         this.socket.on("finalVotacion",function(data){
             console.log(data);
