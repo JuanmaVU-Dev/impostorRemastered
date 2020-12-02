@@ -3,6 +3,7 @@ function ClienteWS(){
     this.nick = undefined;
     this.codigo = undefined;
     this.owner = false;
+    this.numJugador;
     this.crearPartida = function(nick, numero){
         this.nick = nick;
         this.socket.emit("crearPartida", nick, numero);
@@ -20,6 +21,9 @@ function ClienteWS(){
     this.listaPartidas = function(){
         this.socket.emit("listaPartidas");
     }
+    this.estoyDentro = function(){
+        this.socket.emit("estoyDentro", this.codigo, this.nick);
+    }
     this.atacar = function(nickAtacado){
         this.socket.emit("atacar", this.codigo, this.nick, nickAtacado);
     }
@@ -34,6 +38,9 @@ function ClienteWS(){
     }
     this.obtenerEncargo = function(){
         this.socket.emit("obtenerEncargo", this.codigo, this.nick)
+    }
+    this.movimiento = function(direccion){
+        this.socket.emit("movimiento", this.codigo, this.nick, this.numJugador);
     }
     //final votacion
     //cuantos han votado
@@ -52,6 +59,7 @@ function ClienteWS(){
             console.log(data);
             if(data.codigo != "fallo"){
                 cli.owner = true;
+                cli.numJugador = 0;
                 cw.mostrarEsperandoRival();
             }
         });
@@ -83,6 +91,16 @@ function ClienteWS(){
         });
         this.socket.on("recibirListaPartidas",function(partidas){
             console.log(partidas);
+        });
+        this.socket.on("dibujarRemoto",function(lista){
+            console.log(lista);
+            for(var i=0;i<lista.lenght;i++){
+                lanzarJugadorRemoto(lista[i].nick, lista[i].numJugador);
+            }
+        });
+        this.socket.on("moverRemoto",function(datos){
+            console.log(lista);
+            moverRemoto(datos.direccion, datos.nick, datos.numJugador);
         });
         this.socket.on("recibirListaPartidasDisponibles",function(partidas){
             console.log(partidas);

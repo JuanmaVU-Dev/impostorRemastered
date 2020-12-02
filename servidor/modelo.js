@@ -116,6 +116,8 @@ function Partida(num, owner, codigo, juego) {
 		}
 		this.usuarios[nuevo] = new Usuario(nuevo);
 		this.usuarios[nuevo].partida = this;
+		var numero = this.numeroDeJugadores() - 1;
+		this.usuarios[nuevo].numJugador = numero;
 	}
 	this.comprobarMinimo = function () {
 		return this.numeroDeJugadores() >= 4;
@@ -160,6 +162,14 @@ function Partida(num, owner, codigo, juego) {
 	}
 	this.numeroDeJugadores = function () {
 		return Object.keys(this.usuarios).length;
+	}
+	this.obtenerListaJugadores = function(){
+		var lista = [];
+		for(var key in usuarios){
+			var usr = usuarios[key];
+			lista.push[{"nick":usr.nick, "numJugador":usr.numJugador}];
+		}
+		return lista;
 	}
 	this.atacar = function (nick) {
 			this.fase.atacar(nick, this);
@@ -413,6 +423,7 @@ function Usuario(nick) {
 	this.votos = 0;
 	this.skip = false;
 	this.haVotado = false;
+	this.numJugador;
 	this.estado = new Vivo();
 	this.iniciarPartida = function () {
 		this.partida.iniciarPartida();

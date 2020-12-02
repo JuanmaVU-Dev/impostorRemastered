@@ -62,6 +62,18 @@ function ServidorWS(){
             socket.on('listaPartidas', function() {
                 cli.enviarRemitente(socket, "recibirListaPartidas", juego.listaPartidas());
             });
+            socket.on('estoyDentro', function(codigo, nick) {
+                //var usr = juego.obtenerJugador(codigo, nick);
+                // var numero = jeugo.partidas[codigo].usuarios[nick].numJugador;
+                // var datos = {"nick":nick, "numJugador": numero};
+                // cli.enviarATodosMenosRemitente(socket, codigo, "dibujarRemoto", datos);
+                var lista = juego.obtenerListaJugadores(codigo);
+                cli.enviarRemitente(socket, codigo, "dibujarRemoto", lista);
+            });
+            socket.on('movimiento', function(codigo, nick) {
+                var datos = {nick:nick, numJugador:numJugador, direccion:direccion};
+                cli.enviarATodosMenosRemitente(socket, codigo, "moverRemoto", datos);
+            });
             socket.on('lanzarVotacion', function(codigo, nick) {
                 juego.lanzarVotacion(codigo, nick);
                 var fase = juego.obtenerFase(codigo);

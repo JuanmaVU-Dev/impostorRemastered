@@ -5,7 +5,6 @@
  */
 
 function lanzarJuego(){
-  cw.limpiar();
   game = new Phaser.Game(config);
 }
 
@@ -31,9 +30,14 @@ const config = {
 
 let cursors;
 let player;
-let jugadores;
-let recursos = [{nombre:"miles",frame:0},{nombre:"spidey",frame:0}]
+let player2;
+var worldLayer;
+var jugadores = {}; //colección de jugadores remotos
+var crear;
+var recursos = [{sprite:"miles",frame:0},{sprite:"spidey",frame:3}]
 let game;
+var map;
+var spawnPoint;
 let showDebug = false;
 
 function preload() {
@@ -51,7 +55,8 @@ function preload() {
 }
 
 function create() {
-  const map = this.make.tilemap({ key: "map" });
+  crear = this;
+  map = this.make.tilemap({ key: "map" });
 
   // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
   // Phaser's cache (i.e. the name you used in preload)
@@ -71,26 +76,20 @@ function create() {
 
   // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
   // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
-  const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
+  spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
 
   // Create a sprite with physics enabled via the physics system. The image used for the sprite has
   // a bit of whitespace, so I'm using setSize & setOffset to control the size of the player's body.
   // player = this.physics.add
-  player = this.physics.add.sprite(spawnPoint.x, spawnPoint.y,"varios", recursos);
-  //   .sprite(spawnPoint.x, spawnPoint.y, "atlas", "misa-front")
-  //   .setSize(30, 40)
-  //   .setOffset(0, 24);
 
-  // Watch the player and worldLayer for collisions, for the duration of the scene:
-  this.physics.add.collider(player, worldLayer);
 
   // Create the player's walking animations from the texture atlas. These are stored in the global
   // animation manager so any sprite can access them.
-  let nombre = recursos[0].nombre;
+  let nombre = recursos[0].sprite;
   const anims = this.anims;
   anims.create({
     key: "gabe-left-walk",
-    frames: anims.generateFrameNames("varios", {
+    frames: anims.generateFrameNames("gabe", {
       //prefix: "misa-left-walk.",
       start: 3,
       end: 5,
@@ -133,40 +132,32 @@ function create() {
     repeat: -1
   });
 
+  cursors = crear.input.keyboard.createCursorKeys();
+  //lanzarJugador(ws.numJugador);
+  //ws.estoyDentro();
+}
 
-  const camera = this.cameras.main;
+function lanzarJugador(numJugador) {
+  player = crear.physics.add.sprite(spawnPoint.x, spawnPoint.y,"varios",recursos[numJugador].frame);    
+  crear.physics.add.collider(player, worldLayer);
+  //crear.physics.add.collider(player2, worldLayer);
+  camera = crear.cameras.main;
   camera.startFollow(player);
   camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+}
 
-  cursors = this.input.keyboard.createCursorKeys();
+function lanzarJugadorRemoto(nick, numJugador) {
+  var frame = recursos[numJugador].frame;
+  jugadores[nick] = crear.physics.add.sprite(spawnPoint.x + 15*numJugador, spawnPoint.y,"varios",frame);    
+  crear.physics.add.collider(player, worldLayer);
+}
 
-  // Help text that has a "fixed" position on the screen
-  // this.add
-  //   .text(16, 16, 'Arrow keys to move\nPress "D" to show hitboxes', {
-  //     font: "18px monospace",
-  //     fill: "#000000",
-  //     padding: { x: 20, y: 10 },
-  //     backgroundColor: "#ffffff"
-  //   })
-  //   .setScrollFactor(0)
-  //   .setDepth(30);
+function moverRemoto(direccion,nick,numJugador){
+  var remoto = jugadores[nick];
 
-  // Debug graphics
-  // this.input.keyboard.once("keydown_D", event => {
-  //   // Turn on physics debugging to show player's hitbox
-  //   this.physics.world.createDebugGraphic();
-
-  //   // Create worldLayer collision graphic above the player, but below the help text
-  //   const graphics = this.add
-  //     .graphics()
-  //     .setAlpha(0.75)
-  //     .setDepth(20);
-  //   worldLayer.renderDebug(graphics, {
-  //     tileColor: null, // Color of non-colliding tiles
-  //     collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-  //     faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-  //   });
-  // });
+  if(direccion == "left"){
+    remoto.body.setVelocityX(-speed);
+  }
 }
 
 function update(time, delta) {
@@ -179,6 +170,7 @@ function update(time, delta) {
   // Horizontal movement
   if (cursors.left.isDown) {
     player.body.setVelocityX(-speed);
+    ws.movimiento("left");
   } else if (cursors.right.isDown) {
     player.body.setVelocityX(speed);
   }
