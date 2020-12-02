@@ -50,6 +50,7 @@ function ClienteWS(){
             cli.codigo = data.codigo;
             console.log(data);
             if(data.codigo != "fallo"){
+                cli.owner = true;
                 cw.mostrarEsperandoRival();
             }else{
                 cw.mostrarCrearPartida();
@@ -67,8 +68,8 @@ function ClienteWS(){
         this.socket.on("acabaPartida", function(data){
             console.log(data);
         });
-        this.socket.on("nuevoJugador",function(nick){
-            console.log(nick+" se une a la partida");
+        this.socket.on("nuevoJugador",function(lista){
+            cw.mostrarListaJugadores(lista);
         });
         this.socket.on("esperando",function(fase){
             console.log("esperando...");

@@ -32,7 +32,8 @@ function ServidorWS(){
                 var owner = juego.partidas[codigo].nickOwner;
                 console.log('usuario nick: '+nick+" se une a partida: "+codigo);
                 cli.enviarRemitente(socket, "unidoAPartida", {"codigo" : codigo,"owner": owner});
-                cli.enviarATodosMenosRemitente(socket, codigo, "nuevoJugador",nick)
+                var lista = juego.obtenerListaJugadores(codigo);
+                cli.enviarATodos(io, codigo, "nuevoJugador", lista);
             });
             socket.on('iniciarPartida', function(codigo, nick) {
                 //ToDO

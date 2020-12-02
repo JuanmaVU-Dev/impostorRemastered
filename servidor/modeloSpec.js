@@ -217,13 +217,17 @@ describe("El juego del impostor", function () {
                     for(var key in inocentes){
                         inocentes[key].votar(impostor.nick);
                     }
+                    impostor.votar(inocentes[Object.keys(inocentes)[0]].nick);
                     expect(impostor.votos).toEqual(3);
                     expect(impostor).toEqual(partida.masVotado());
-                    //expect(impostor.estado.nombre).toEqual("muerto");
-                    //expect(partida.gananCiudadanos()).toBe(true);
+                    expect(impostor.estado.nombre).toEqual("muerto");
+                    expect(partida.gananCiudadanos()).toBe(true);
                 });
 
                 it("votacion: se mata a un inocente", function () {
+                    expect(partida.numeroCiudadanosVivos()).toEqual(3);
+                    expect(partida.numeroImpostoresVivos()).toEqual(1);
+                    expect(partida.fase.nombre).toEqual("Jugando");
                     juego.lanzarVotacion(codigo, nick);
                     partida.usuarios[nick].impostor = true;
                     partida.usuarios["Mario"].impostor = false;

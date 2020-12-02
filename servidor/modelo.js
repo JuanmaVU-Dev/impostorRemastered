@@ -84,6 +84,9 @@ function Juego() {
 		res = {"encargo" : encargo, "impostor" : impostor}
 		return res;
 	}
+	this.obtenerListaJugadores = function(codigo){
+		return this.partidas[codigo].obtenerListaJugadores();
+	}
 	this.atacar=function(codigo,nick,atacado){
 		var usr=this.partidas[codigo].usuarios[nick];
 		usr.atacar(atacado);
@@ -287,6 +290,9 @@ function Partida(num, owner, codigo, juego) {
 	}
 	this.huecos = function(){
 		return this.maximo-this.numeroDeJugadores();
+	}
+	this.obtenerListaJugadores = function(){
+		return Object.keys(this.usuarios);
 	}
 	this.agregarUsuario(owner);
 }
