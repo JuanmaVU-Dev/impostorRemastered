@@ -1,0 +1,71 @@
+Objetivo del proyecto:
+
+	- Juego multijugador
+	- Basado en Web.
+	- Usuarios anonimos.
+-----------------------------------------------------------------------------
+	- Arquitectura basada en servicios. SaaS - Software as a Service
+-----------------------------------------------------------------------------
+	- Metodología ágil: Scrum + XP
+	- Kunagi -> Credenciales
+	- Repositorio de codigo: GitHub
+-----------------------------------------------------------------------------
+Orgnanización de la solución en FS:
+dev/git
+-----------------------------------------------------------------------------
+Clonamos el repositorio:
+git clone [URL]
+-----------------------------------------------------------------------------
+Volvemos a la solucion del impostor
+creamos el index.html
+git add .
+git commit -m"mensaje commit"
+git push
+-----------------------------------------------------------------------------
+
+Tareas del proyecto: (alto nivel)
+
+1. Diseñar el modelo (lógico)
+2. Desarrollar la arquitectura SaaS.
+3. Elegir un framework gráfico/ejemplo : Phaser - tutorial
+4. Integrar el modelo en la arquitectura.
+5. Integrar el prototipo.
+
+-----------------------------------------------------------------------------
+
+Funcionalidad:
+- Crear partida(num) el sistema devuelve un codigo
+- Unir a partida, el sistema controla el maximo
+- Abandonar partida
+- Modificar partida (cambiar mapa, ampliar maximo)
+- Iniciar partida
+- Asignar tareas
+- Asignar el impostor
+- Atacar (tiempo entre ataques)
+- Votar al sospechoso o saltar la votacion
+
+----------------------------
+jardines
+calles
+mobiliario
+basura
+
+underscore
+
+--------------------------------------------------
+
+ajustar formularios
+
+--------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+	
+

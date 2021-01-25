@@ -8,13 +8,16 @@ var io = require('socket.io').listen(server);
 var wss = require('./servidor/servidorWS.js');
 var servidorWS=new wss.ServidorWS();
 
+var min = process.argv.slice(2)[0];
+var test = process.argv.slice(2)[1];
+
 app.set('port', process.env.PORT || 5000);
 
 app.use(express.static(__dirname + '/'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var juego = new modelo.Juego();
+var juego = new modelo.Juego(min, test);
 
 // /nombre-ruta-api/:param1/:param2/:...
 
@@ -59,6 +62,19 @@ app.get('/listaPartidas',function(request, response){
     var listaPartidas = juego.listaPartidas();
     response.send(listaPartidas);
 });
+
+app.get("/partidasCreadas/:admin",function(request, response){
+    var admin = request.params.admin;
+    juego.partidasCreadas(admin, function lista(lista) {
+        response.send(lista);
+    })
+})
+app.get("/partidasTerminadas/:admin",function(request, response){
+    var admin = request.params.admin;
+    juego.partidasTerminadas(admin, function lista(lista) {
+        response.send(lista);
+    })
+})
 
 server.listen(app.get('port'), function () {
     console.log('Node esta escuchando en el puerto', app.get('port'));

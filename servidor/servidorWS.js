@@ -21,21 +21,22 @@ function ServidorWS(){
         var cli=this;
 		io.on('connection',function(socket){		    
 		    socket.on('crearPartida', function(nick,numero) {
-		        console.log('usuario nick: '+nick+" crea partida numero: "+numero);
-				var codigo=juego.crearPartida(numero,nick);	        				
-                cli.enviarRemitente(socket,"partidaCreada",{"codigo":codigo});
+                var codigo=juego.crearPartida(numero,nick);	      
+                socket.join(codigo);
+                console.log('usuario nick: '+nick+" crea partida numero: "+numero);  				
+                cli.enviarRemitente(socket,"partidaCreada",{"codigo":codigo, "owner":nick});
                 var lista = juego.listaPartidasDisponibles();
                 cli.enviarGlobal(socket, "recibirListaPartidasDisponibles", lista);      		        
             });
             socket.on('unirAPartida', function(codigo, nick) {
                 //nick o codigo nulo
-                var res = juego.unirAPartida(codigo, nick);
-                socket.join(codigo);
-                var owner = juego.partidas[codigo].nickOwner;
-                console.log('usuario nick: '+nick+" se une a partida: "+codigo);
-                cli.enviarRemitente(socket, "unidoAPartida", {"codigo" : codigo,"owner": owner});
-                var lista = juego.obtenerListaJugadores(codigo);
-                cli.enviarATodos(io, codigo, "nuevoJugador", lista);
+                var res=juego.unirAPartida(codigo,nick);
+		    	socket.join(codigo);
+		    	var owner=juego.partidas[codigo].nickOwner;
+		  		console.log("Usuario "+res.nick+" se une a partida "+res.codigo+" numJugador: "+res.numJugador);
+		    	cli.enviarRemitente(socket,"unidoAPartida",res);
+		    	var lista=juego.obtenerListaJugadores(codigo);
+		    	cli.enviarATodos(io, codigo, "nuevoJugador",lista);
             });
             socket.on('iniciarPartida', function(codigo, nick) {
                 //ToDO
@@ -52,12 +53,15 @@ function ServidorWS(){
             socket.on('atacar',function(codigo, nickAtacante, nickAtacado){
                 juego.partidas[codigo].usuarios[nickAtacante].atacar(nickAtacado);
                 var fase = juego.obtenerFase(codigo);
+                cli.enviarATodos(io, codigo, "muereInocente", nickAtacado);
+                cli.enviarRemitente(socket, "hasAtacado", fase);
                 if(fase == "Final"){
-                    cli.enviarATodos(io,codigo, "acabaPartida", "Ganan los impostores");
-                }else{
-                    //avisar al impostor
-                    cli.enviarRemitente(socket, "hasAtacado", fase);
+                    cli.enviarATodos(io,codigo, "acabaPartida", "Gana el impostor");
                 }
+                // else{
+                //     //avisar al impostor
+                //     cli.enviarATodos(io, codigo, "muereInocente", nickAtacado);
+                // }
             });
             socket.on('listaPartidas', function() {
                 cli.enviarRemitente(socket, "recibirListaPartidas", juego.listaPartidas());
@@ -68,23 +72,26 @@ function ServidorWS(){
                 // var datos = {"nick":nick, "numJugador": numero};
                 // cli.enviarATodosMenosRemitente(socket, codigo, "dibujarRemoto", datos);
                 var lista = juego.obtenerListaJugadores(codigo);
-                cli.enviarRemitente(socket, codigo, "dibujarRemoto", lista);
+                cli.enviarRemitente(socket, "dibujarRemoto", lista);
             });
-            socket.on('movimiento', function(codigo, nick) {
-                var datos = {nick:nick, numJugador:numJugador, direccion:direccion};
+            socket.on('movimiento', function(nick, codigo, numJugador, direccion, x, y) {
+                // this.nick,this.codigo,this.numJugador,direccion,x,y)
+                // (direccion, nick, numJugador,x,y)
+                var datos = {nick:nick, numJugador:numJugador, direccion:direccion, x:x, y:y};
                 cli.enviarATodosMenosRemitente(socket, codigo, "moverRemoto", datos);
             });
             socket.on('lanzarVotacion', function(codigo, nick) {
                 juego.lanzarVotacion(codigo, nick);
-                var fase = juego.obtenerFase(codigo);
-                cli.enviarATodos(io, codigo, "votacionLanzada", fase);
+                var partida = juego.partidas[codigo];
+                var lista = partida.obtenerListaJugadoresVivos();
+                cli.enviarATodos(io, codigo, "votacionLanzada", lista);
             });
             socket.on('saltarVoto', function(codigo, nick) {
                 var partida = juego.partidas[codigo];
                 juego.saltarVoto(codigo, nick);
                 if(partida.todosHanVotado()){
                     //enviar el mas votado si lo hay
-                    var data = {"elegido":partida.elegido,"fase":juego.obtenerFase(codigo)}
+                    var data = {"elegido":partida.elegido,"fase":juego.obtenerFase(codigo),"esImpostor":partida.elegidoEsImpostor()}
                     cli.enviarATodos(io,codigo,"finalVotacion",data);
                 }else{
                     //enviar lista de los que han votado
@@ -96,8 +103,16 @@ function ServidorWS(){
                 juego.votar(codigo, nick, sospechoso);
                 if(partida.todosHanVotado()){
                     //enviar el mas votado si lo hay
-                    var data = {"elegido":partida.elegido,"fase":juego.obtenerFase(codigo)}
+                    var data = {"elegido":partida.elegido,"fase":juego.obtenerFase(codigo),"esImpostor":partida.elegidoEsImpostor()}
                     cli.enviarATodos(io,codigo,"finalVotacion",data);
+                    if(partida.haTerminado()){
+                        if(partida.elegidoEsImpostor()){
+                            cli.enviarATodos(io,codigo, "acabaPartida", "Ganan los ciudadanos");
+                            console.log("Acaba la partida - Ganan los ciudadanos");
+                        }else{
+                            cli.enviarATodos(io,codigo, "acabaPartida", "Gana el impostor");
+                        }
+                    }
                 }else{
                     //enviar lista de los que han votado
                     cli.enviarATodos(io,codigo,"haVotado",partida.listaHanVotado());
@@ -108,6 +123,23 @@ function ServidorWS(){
             });
             socket.on('listaPartidasDisponibles', function() {
                 cli.enviarRemitente(socket, "recibirListaPartidasDisponibles", juego.listaPartidasDisponibles());
+            });
+            socket.on('realizarTarea', function(codigo, nick) {
+                console.log(codigo+" "+nick+" realiza la tarea");
+                juego.realizarTarea(codigo, nick);
+                var fase = juego.obtenerFase(codigo);
+                var partida = juego.partidas[codigo];
+                var porciento = partida.porcentajeTarea(nick);
+                var porcientoGlobal = partida.porcentajeGlobal(nick);
+                cli.enviarRemitente(socket, "tareaRealizada", {"porcentaje":porciento,"porcentajeGlobal":porcientoGlobal});
+                cli.enviarATodos(io,codigo, "barraProgresoGlobal", porcientoGlobal);
+                if(fase == "Final"){
+                    cli.enviarATodos(io,codigo, "acabaPartida", "Ganan los ciudadanos");
+                    console.log("Acaba la partida - Ganan los ciudadanos");
+                }
+            });
+            socket.on('enviarMensaje',function(codigo, nick, mensaje){
+                cli.enviarATodos(io,codigo, "recibirMensaje", {"nick":nick,"mensaje":mensaje});
             });
 		});
     }
