@@ -38,7 +38,7 @@ var teclaV;
 var teclaT;
 var jugadores = {}; //colección de jugadores remotos
 var crear;
-var recursos = [{frame:0,sprite:"gabe"},{frame:3,sprite:"spidey"},{frame:6,sprite:"capucha"},{frame:48,sprite:"miles"}]
+var recursos = [{frame:0,sprite:"gabe"},{frame:3,sprite:"spidey"},{frame:6,sprite:"capucha"},{frame:48,sprite:"miles"},{frame:0,sprite:"gabe"},{frame:3,sprite:"spidey"},{frame:6,sprite:"capucha"},{frame:48,sprite:"miles"}]
 let game;
 var map;
 var spawnPoint;
